@@ -5,19 +5,21 @@
 [![Watch the demo](https://img.youtube.com/vi/lUSLr8VZizY/maxresdefault.jpg)](https://www.youtube.com/watch?v=lUSLr8VZizY)
 
 
-![Banner or Game Logo](./assets/banner.png)
 
 ## 📘 Overview
-**[Game Title]** is a [genre, e.g., "gacha RPG adventure"] where players collect, equip, and interact with characters inspired by [K-pop groups / fantasy / etc.].  
-It blends stylish UI, custom models, and smart scripting to create an immersive Roblox experience.
+**Photocard RNG** is a free gacha RPG collection game where players roll to collect, equip, and interact with characters inspired by 50 K-pop idols accross 6 different K-pop groups.  
+
+This game blends stylish UI, custom 3D models, and smart Lua scripting to deliver an immersive Roblox experience. All core systems — including the roll UI, roll animations, inventory, data storage, and character equipping — are fully scripted in Lua. Characters and environments are designed directly in Roblox Studio for seamless integration.
 
 ---
 
 ## 🕹️ Gameplay Summary
 - 🎲 Roll for characters with rarity-based odds
 - 🎒 View and manage your personal character inventory
-- 🧍 Equip one character to follow you around the map
+- 🧍 Equip up to two characters to follow you around the map
 - 🗺️ Explore a themed world tied to your character's origin
+- ⚡️ Discover K-pop-themed lightsticks hidden across the map
+- 🍀 Store and use lightsticks to boost your luck during rolls
 
 ---
 
