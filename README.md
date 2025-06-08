@@ -193,8 +193,8 @@ If the roll is lucky, the game increases the chances of pulling rarer characters
 ### Inventory UI:
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/3cef85c7-443b-46ad-b481-d25fa78149f4" height="375"/>
-  <img src="https://github.com/user-attachments/assets/c969dcef-05bf-482b-a678-479291e97d98" height="375"/>
+  <img src="https://github.com/user-attachments/assets/3cef85c7-443b-46ad-b481-d25fa78149f4" height="275"/>
+  <img src="https://github.com/user-attachments/assets/c969dcef-05bf-482b-a678-479291e97d98" height="275"/>
 </p>
 
 
