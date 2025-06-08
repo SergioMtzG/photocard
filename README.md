@@ -1,5 +1,8 @@
 # 🎮 [Photocard RNG]
 
+[![Rolling Animation](https://i.imgflip.com/9wlfzt.gif)](https://imgflip.com/gif/9wlfzt)
+
+
 ![Banner or Game Logo](./assets/banner.png)
 
 ## 📘 Overview
