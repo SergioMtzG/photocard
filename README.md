@@ -7,7 +7,7 @@
 
 
 ## 📘 Overview
-**Photocard RNG** is a free gacha RPG collection game where players roll to collect, equip, and interact with characters inspired by 50 K-pop idols accross 6 different K-pop groups. The game is designed for seamless play on **desktops, phones, and tablets**, ensuring a consistent experience across all devices.
+**Photocard RNG** is a free gacha RPG collection game where players roll to collect, equip, and interact with characters inspired by 50 K-pop idols across 6 different K-pop groups. The game is designed for seamless play on **desktops, phones, and tablets**, ensuring a consistent experience across all devices.
 
 This game blends stylish UI, custom 3D models, and smart Lua scripting to deliver an immersive Roblox experience. All core systems — including the roll UI, roll animations, inventory, data storage, and character equipping — are fully scripted in Lua. Characters and environments are designed directly in Roblox Studio for seamless integration.
 
@@ -111,11 +111,74 @@ local NPC_Rarities_ByGroup = {
   <img src="https://github.com/user-attachments/assets/3d85f473-5ee1-4a5f-9ab5-bc9b2d7fa157" height="300"/>
   <img src="https://github.com/user-attachments/assets/398c50e6-b65a-40b9-ab39-dd563d7a85de" height="300"/>
   <img src="https://github.com/user-attachments/assets/0de38e21-f30b-46f8-b624-529aec57e885" height="300"/>
+</p>
+
+<p align="center">
   <img src="https://github.com/user-attachments/assets/6927ae6e-3793-4072-ba05-da14666c002d" height="300"/>
   <img src="https://github.com/user-attachments/assets/c2b767d6-7b1a-428b-9d84-0773e606f737" height="300"/>
 </p>
 
+I designed the game with five rarity groups to balance excitement, collectibility, and player retention:
 
+- The most decorated and iconic members or outfits are assigned to the highest rarities (e.g., Mythic, Legendary). These characters are rarer but more visually striking, with special effects—like Candy Wonnie’s unique candy aura—and enhanced name tags in-game.
+
+- The rarity tiers are weighted carefully to make rare characters feel special and valuable but still attainable enough to keep K-pop fans engaged and motivated to keep rolling.
+
+- Common characters make up the majority of pulls to keep the collection accessible, while epic and rare tiers serve as exciting middle ground.
+
+- This tiered system reflects the popularity and iconic status of members and their costumes, encouraging players who are fans of those groups to stay longer and enjoy hunting for their favorites.
+
+```lua
+-- Global variables:
+local luckEffect = false
+
+local function shouldApplyLuckBonus()
+	if LuckEffectSystem.isLuckEffectActive() then
+		luckEffect = true
+	end
+end
+
+
+local function getWeightedRandomNPCName(groupName, isLuckBoost)
+	-- Create a temporary table to hold boosted weights
+	local tempWeights = {}
+	for name, data in pairs(groupTable) do
+		local effectiveWeight = data.weight
+
+		-- If it's a luck boost roll, boost better rarities (reduce their effective weight)
+		if isLuckBoost or luckEffect then
+			print("LUCKYSPIN")
+			if data.rarity == "Common" then
+				effectiveWeight = data.weight * 0.4878
+			elseif data.rarity == "Rare" then
+				effectiveWeight = data.weight * 2.04
+			elseif data.rarity == "Epic" then
+				effectiveWeight = data.weight * 1.8
+			elseif data.rarity == "Legendary" then
+				effectiveWeight = data.weight * 2
+			elseif data.rarity == "Mythic" then
+				effectiveWeight = data.weight * 3
+			end
+		end
+	end
+
+	local rand = math.random(1, totalWeight)
+	local counter = 0
+	for name, weight in pairs(tempWeights) do
+		counter += weight
+		if rand <= counter then
+			return name
+		end
+	end
+end
+```
+Additionally, when choosing a random character for a roll, the system checks whether the roll qualifies as “lucky.” This can happen in two ways:
+
+- Guaranteed Luck Roll: Every 10th roll is automatically lucky, rewarding consistent play.
+
+- Temporary Luck Boost: Picking up and activating a K-pop lightstick grants a 90-second window where luck is boosted.
+
+If the roll is lucky, the game increases the chances of pulling rarer characters by dynamically adjusting probability weights during the selection process. This system creates rewarding peaks in gameplay while incentivizing both long-term play and map exploration.
 
 ---
 
