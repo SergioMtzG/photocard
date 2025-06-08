@@ -1,8 +1,7 @@
 # 🎮 [Photocard RNG]
 
-<a href="https://imgflip.com/gif/9wlfzt">
-  <img src="https://i.imgflip.com/9wlfzt.gif" width="720" />
-</a>
+[![Watch the demo](https://img.youtube.com/vi/lUSLr8VZizY/maxresdefault.jpg)](https://www.youtube.com/watch?v=lUSLr8VZizY)
+
 
 ![Banner or Game Logo](./assets/banner.png)
 
