@@ -181,6 +181,26 @@ Additionally, when choosing a random character for a roll, the system checks whe
 If the roll is lucky, the game increases the chances of pulling rarer characters by dynamically adjusting probability weights during the selection process. This system creates rewarding peaks in gameplay while incentivizing both long-term play and map exploration.
 
 ---
+## 💼 Inventory System 
+
+<img src="https://github.com/user-attachments/assets/473f79bb-edfa-4fa5-8457-eb35a96e3efc" width="700"/>
+
+### Overview:
+- Inventory GUI creation
+- DataStores to save player informatipn
+- Shared game state
+
+### Inventory UI:
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/3cef85c7-443b-46ad-b481-d25fa78149f4" height="375"/>
+  <img src="https://github.com/user-attachments/assets/c969dcef-05bf-482b-a678-479291e97d98" height="375"/>
+</p>
+
+
+
+
+
 
 ## 🌟 Inspirations
 ### Game Design:
