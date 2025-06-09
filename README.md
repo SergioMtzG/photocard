@@ -187,7 +187,7 @@ If the roll is lucky, the game increases the chances of pulling rarer characters
 
 ### Overview:
 - Inventory GUI creation
-- DataStores to save player informatipn
+- DataStores to save player information
 - Shared game state
 
 ### Inventory UI:
@@ -198,7 +198,176 @@ If the roll is lucky, the game increases the chances of pulling rarer characters
 </p>
 
 
+``` lua
+button.MouseButton1Click:Connect(function()
 
+	local inventoryData = getInventoryFunction:InvokeServer()
+
+	-- Loop through the desired order
+	for _, charName in ipairs(characterOrder) do
+		if inventoryData[charName] then  -- Check if the player has this character
+			local newButton = template:Clone()
+			newButton.Name = charName
+			newButton.Text = charName .. " x" .. inventoryData[charName]
+			newButton.Parent = container
+			newButton.Visible = true
+
+			local countLabel = newButton:FindFirstChild("Count", true)  -- true = search descendants
+			if countLabel and countLabel:FindFirstChild("CountLabel") then
+				countLabel.CountLabel.Text = "x" .. inventoryData[charName]
+			end
+
+			local viewport = newButton:FindFirstChild("ViewportFrame")
+			if viewport then
+				local info = characterInfo[charName]
+				if info then
+					loadNPCInViewport(viewport, charName, info.group, info.rarity)
+				end
+			end
+
+			newButton.MouseButton1Click:Connect(function()
+				local info = characterInfo[charName]
+					if info then
+						selectedCharacter = { name = charName, rarity = info.rarity, group = info.group }
+						print("Selected character: " .. charName)
+						rarity.Text = info.rarity
+						rarityName.Text = info.rarity
+						modelName.Text = charName
+						groupName.Text = info.group
+						infoFrame.Visible = true
+						loadNPCInViewport(choseViewport, charName, info.group, info.rarity)
+
+						-- Update equip button text based on equipped status
+						updateEquipButtonText()
+					end
+				end)
+			end
+		end
+	end
+end)
+
+```
+
+These scripts and objects power the games inventory system. An inventory UI template was created using various Roblox UI elements, including TextLabels, ViewportFrames, and ImageButtons, styled to match the roll animation UI for visual consistency. Each inventory slot uses a viewport to preview the character in 3D, just like during the roll. When the main inventory button is clicked, the script uses a RemoteFunction to retrieve that specific player’s saved inventory from Roblox's **DataStore API**. It loops through a predefined order of characters, clones and updates the template with that player’s owned units, and loads matching models and rarities into each viewport. Every slot is fully clickable—clicking a character shows more detailed info to the left panel, including rarity, name, and group affiliation.
+
+### Data Storing:
+
+``` lua
+
+local DataStoreService = game:GetService("DataStoreService")
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local characterStore = DataStoreService:GetDataStore("CharacterInventory")
+local rollEvent = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("RollCharacter")
+local getInventoryFunction = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("GetInventory")
+
+-- Rolls and updates inventory
+local function addToInventory(player, characterName)
+	local userId = tostring(player.UserId)
+	local success, data = pcall(function()
+		return characterStore:GetAsync(userId)
+	end)
+
+	if not success then
+		warn("Failed to get inventory for", player.Name)
+		data = {}
+	end
+
+	data = data or {}
+	data[characterName] = (data[characterName] or 0) + 1
+
+	local saveSuccess, err = pcall(function()
+		characterStore:SetAsync(userId, data)
+	end)
+
+	if not saveSuccess then
+		warn("Failed to save inventory for", player.Name, err)
+	end
+end
+
+-- Handle roll requests
+rollEvent.OnServerEvent:Connect(function(player, characterName)
+	addToInventory(player, characterName)
+end)
+
+-- Handle inventory fetch
+getInventoryFunction.OnServerInvoke = function(player)
+	local userId = tostring(player.UserId)
+	local success, data = pcall(function()
+		return characterStore:GetAsync(userId)
+	end)
+	if success then
+		return data or {}
+	else
+		warn("Inventory fetch failed:", data)
+		return {}
+	end
+end
+
+```
+
+This script is the backbone of Photocard RNG's progression system, handling all persistent player data. Built on Roblox's **DataStoreService API**, it ensures that every character a player collects is securely saved to Roblox’s servers, allowing their progress to persist across sessions and devices.
+
+Without this, players would lose their entire inventory upon leaving — which would make a collection-based game fundamentally unplayable. This script bridges that critical gap by managing:
+
+- Storage: It creates and updates a player-specific table using their unique UserId as a key.
+
+- Event Listening: It listens to RollCharacter and GetInventory Remote events. These are triggered from local UI scripts (such as the roll animation or inventory menu), and must communicate via RemoteEvents/Functions since the actual data lives on the server.
+
+- Data Schema: Player inventories are stored as Lua tables where the character name is the key and the value is the count of how many times that character has been rolled.
+
+When a roll is completed, the script updates the player’s stored data with the new character. When the inventory is opened, it fetches that player’s data and sends it back to the client. All of this is wrapped in safe pcall() blocks to handle potential read/write errors gracefully.
+
+This separation between client visuals and server logic is what enables both a responsive UI and reliable, permanent storage — making the game feel snappy and secure.
+
+### Shared game state:
+
+``` lua
+local SharedGameState = {}
+-- Create a table to store state
+SharedGameState.State = {
+	IsRolling = false,
+	IsInventoryOpen = false,
+	IsStorageOpen = false
+}
+
+-- Function to update rolling state
+function SharedGameState:SetRollingState(isRolling)
+	self.State.IsRolling = isRolling
+	self.StateChanged:Fire("IsRolling", isRolling)
+end
+
+-- Function to update inventory open state
+function SharedGameState:SetInventoryOpen(isOpen)
+	self.State.IsInventoryOpen = isOpen
+	self.StateChanged:Fire("IsInventoryOpen", isOpen)
+end
+
+-- Function to check rolling state
+function SharedGameState:IsRolling()
+	return self.State.IsRolling
+end
+
+-- Function to check inventory open state
+function SharedGameState:IsInventoryOpen()
+	return self.State.IsInventoryOpen
+end
+
+return SharedGameState
+```
+
+A subtle but essential feature behind the game's UI responsiveness is the Shared Game State module, stored in ReplicatedStorage. This lightweight module tracks whether critical UI actions — like rolling or opening the inventory — are currently in progress.
+
+Its purpose is to enforce mutual exclusivity between conflicting actions. For example, if a player is mid-spin during a roll animation, the game temporarily blocks the ability to open the inventory. Similarly, if the inventory is open, the roll button is locked until the player closes it. This helps:
+
+- Preserve the immersive experience, preventing visual glitches or overlapping menus.
+
+- Protect against state corruption, like double-triggered animations or mismatched character previews.
+
+- Keep user flow clean and intentional — one interaction at a time.
+
+By referencing and toggling shared flags in this module (e.g., isRolling, isInventoryOpen), local scripts coordinate seamlessly to maintain the illusion of a polished, single-threaded UI — even though multiple UIs and systems are running in parallel under the hood.
 
 
 
