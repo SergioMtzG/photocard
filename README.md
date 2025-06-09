@@ -24,7 +24,10 @@ This game blends stylish UI, custom 3D models, and smart Lua scripting to delive
 ---
 
 ## 🧪 Roll GUI & System 
-![image](https://github.com/user-attachments/assets/07c4ae0c-cfb4-4cc3-8ad9-6791c23c4381)
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/07c4ae0c-cfb4-4cc3-8ad9-6791c23c4381" width="500"/>
+</p>
+
 ### Overview:
 - Roll, auto roll, fast roll interfaces
 - ViewportFrames used to show 3D character previews
@@ -184,7 +187,10 @@ If the roll is lucky, the game increases the chances of pulling rarer characters
 ---
 ## 💼 Inventory System 
 
+
+<p align="center">
 <img src="https://github.com/user-attachments/assets/473f79bb-edfa-4fa5-8457-eb35a96e3efc" width="700"/>
+</p>
 
 ### Overview:
 - Inventory GUI creation
@@ -372,7 +378,9 @@ By referencing and toggling shared flags in this module (e.g., isRolling, isInve
 
 ## 🙍‍♀️ Character Interaction 
 
+<p align="center">
 <img src="https://github.com/user-attachments/assets/b437312b-2436-4f98-876e-4261c34d4498" width="700"/>
+</p>
 
 ### Overview:
 - Equipping characters in inventory
@@ -536,6 +544,13 @@ end)
 
 ```
 
+The followers server script (a portion shown above) is the core system that delivers the real multiplayer functionality of equipped characters. It listens for remote events like EquipFollowerEvent, which are fired from the local inventory UI when a player clicks Equip or Remove on a character.
+
+Once received, the server determines where to assign the new follower—either to the left or right side of the player—based on availability. This helps maintain a consistent layout and ensures only two characters can follow a player at once.
+
+The script then calls a function to locate the corresponding character model from server storage, clones it, and places it into the game world. From there, the follower enters an active behavior cycle: it constantly attempts to stay near its assigned position relative to the player. If it falls too far behind, the script detects the distance and teleports the character closer—eliminating the annoyance of “lost” followers.
+
+This system creates a seamless and reliable multiplayer experience, allowing players to not only equip characters from their inventory but also proudly showcase those characters in the world, visible to other players in the same server.
 
 
 
