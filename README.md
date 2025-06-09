@@ -60,10 +60,11 @@ local function rollAnimation(groupName, finalNPC, rarity, isLuckBoost, spinFast)
 	end 
 end
 ```
-
+<p align="center">
 <a href="https://imgflip.com/gif/9wnrjz">
   <img src="https://i.imgflip.com/9wnrjz.gif" width="500" alt="Equip System Preview"/>
 </a>
+</p>
 
 
 This function is the heart of the game’s rolling system — it controls the animation, pacing, and visual randomness that make the gacha experience feel dynamic and rewarding.
@@ -368,6 +369,121 @@ Its purpose is to enforce mutual exclusivity between conflicting actions. For ex
 - Keep user flow clean and intentional — one interaction at a time.
 
 By referencing and toggling shared flags in this module (e.g., isRolling, isInventoryOpen), local scripts coordinate seamlessly to maintain the illusion of a polished, single-threaded UI — even though multiple UIs and systems are running in parallel under the hood.
+
+## 🙍‍♀️ Character Interaction 
+
+<img src="https://github.com/user-attachments/assets/b437312b-2436-4f98-876e-4261c34d4498" width="700"/>
+
+### Overview:
+- Equipping characters in inventory
+- Physical character interaction in game
+- Shared game state
+
+### Equipped UI:
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/530963bb-f4e9-46c7-bd8d-bb1eaec2e8ec" height="100"/>
+  <img src="https://github.com/user-attachments/assets/501a74e8-a920-4b98-8288-c03adb89c685" height="50"/>
+</p>
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/3dc36e82-ec85-4b3a-be02-aad948078666" height="200"/>
+</p>
+
+``` lua
+equipButton.MouseButton1Click:Connect(function()
+	if selectedCharacter then
+		local charName = selectedCharacter.name
+		print("Equip clicked for: " .. charName)
+
+		if isCharacterEquipped(charName) then
+			print("Character is already equipped")
+			return
+		end
+
+		-- Check if we can equip more characters (max 2)
+		if #equippedCharacters >= 2 then
+			print("Cannot equip more than 2 characters")
+			return
+		end
+
+		-- Fire server event to equip character
+		equipFollowerEvent:FireServer(charName)
+
+		-- Update local tracking (temporary until next refresh)
+		table.insert(equippedCharacters, charName)
+
+		-- Update button text
+		equipButtonLabel.Text = "Equipped"
+
+		-- Update equipped indicators
+		updateEquippedIndicators()
+	else
+		print("No character selected to equip.")
+	end
+end)
+
+removeButton.MouseButton1Click:Connect(function()
+	if selectedCharacter then
+		local charName = selectedCharacter.name
+		print("Remove clicked for: " .. charName)
+
+		if not isCharacterEquipped(charName) then
+			print("Character is not equipped")
+			return
+		end
+
+		-- Fire server event to remove character
+		removeFollowerEvent:FireServer(charName)
+
+		-- Update local tracking (temporary until next refresh)
+		for i, name in ipairs(equippedCharacters) do
+			if name == charName then
+				table.remove(equippedCharacters, i)
+				break
+			end
+		end
+
+		-- Update button text
+		equipButtonLabel.Text = "Equip"
+
+		-- Update equipped indicators
+		updateEquippedIndicators()
+	else
+		print("No character selected to remove.")
+	end
+end)
+
+```
+
+Another essential feature of the game is the ability to actually equip characters so they spawn into the game world. Up to this point, characters only existed in the inventory—great for personal collection tracking, but not meaningful for other players. To add a multiplayer dimension to the experience, I implemented a system that lets players equip up to two characters at a time. These equipped characters continuously follow the player and are visible to others in the same game server. This adds a layer of expression—letting players show off their favorites or rarest characters in real time.
+
+From a UI perspective, this functionality is powered by the above code, which lives inside the inventory script. When a player clicks a character in the inventory, additional information appears on the left panel, including two new buttons: "Equip" and "Remove". These buttons do what they suggest—attempting to equip or unequip the selected character.
+
+I say attempt because several checks are involved:
+
+- There’s a maximum of 2 equipped characters per player (to reduce clutter, improve performance, and potentially allow for monetization of extra slots in the future).
+
+- A character cannot be equipped multiple times (to avoid duplicate followers, which would look strange).
+
+This code also triggers additional events behind the scenes. Since this is client-side UI logic, it communicates with the server via remote events to handle actual character spawning and in-world management. It also gives immediate feedback to the player—like updating the button label to “Equipped” and showing visual indicators—so they’re aware of which characters are currently active and when the max limit is reached as seen below:
+
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/8d2ac818-35ea-4e50-ae8d-12bb4851eb1f" height="100"/>
+  <img src="https://github.com/user-attachments/assets/9d4d1d1e-5abb-4684-b607-4f46a9c39022" height="50"/>
+</p>
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/8c7bb526-b74c-4a5c-9d64-1d89342f21da" height="200"/>
+</p>
+
+
+### In-game equipped character following: 
+
+<p align="center">
+  <img src="https://i.imgflip.com/9wqyil.gif" width="500" alt="Character Equip GIF"/>
+</p>
+
+
 
 
 
