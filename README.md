@@ -484,6 +484,58 @@ This code also triggers additional events behind the scenes. Since this is clien
 </p>
 
 
+``` lua
+-- Listen for the Equip and Remove events
+replicatedStorage.EquipFollowerEvent.OnServerEvent:Connect(function(player, followerName)
+	local playerCache = followerCache[playerID]
+
+	-- Determine which position to use (right first, then left if right is occupied)
+	local position
+	if not playerCache.rightFollower then
+		position = "right" -- Right position is free, use it
+	elseif not playerCache.leftFollower then
+		position = "left" -- Right is occupied but left is free
+	else
+		print("Both follower positions are already occupied.")
+		return -- Both positions are occupied, do nothing
+	end
+
+	-- Equip to the determined position
+	if position == "left" then
+		-- Create the left follower
+		local follower = createFollower(followerName, -3, playerHRP)  -- Left follower has a sideOffset of -3
+
+		-- Store follower data in the cache
+		playerCache.leftFollower = follower
+
+		-- Store follower name as an attribute for persistence
+		player:SetAttribute("LeftFollowerName", followerName)
+
+		-- Start monitoring
+		coroutine.wrap(function() checkAndTeleportIfNotInVicinity(follower, playerHRP, 15) end)()
+		coroutine.wrap(function() detectAndTeleportIfFallen(follower, playerHRP) end)()
+		coroutine.wrap(function() startFollowerMovement(follower, playerHRP) end)()
+
+	elseif position == "right" then
+		-- Create the right follower
+		local follower = createFollower(followerName, 3, playerHRP)  -- Right follower has a sideOffset of 3
+
+		-- Store follower data in the cache
+		playerCache.rightFollower = follower
+
+		-- Store follower name as an attribute for persistence
+		player:SetAttribute("RightFollowerName", followerName)
+
+		-- Start monitoring
+		coroutine.wrap(function() checkAndTeleportIfNotInVicinity(follower, playerHRP, 15) end)()
+		coroutine.wrap(function() detectAndTeleportIfFallen(follower, playerHRP) end)()
+		coroutine.wrap(function() startFollowerMovement(follower, playerHRP) end)()
+	end
+end)
+
+
+```
+
 
 
 
