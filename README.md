@@ -7,7 +7,7 @@
 
 
 ## 📘 Overview
-**Photocard RNG** is a free gacha RPG collection game where players roll to collect, equip, and interact with characters inspired by 50 K-pop idols across 6 different K-pop groups. The game is designed for seamless play on **desktops, phones, and tablets**, ensuring a consistent experience across all devices.
+**Photocard RNG** is a free gacha RPG collection game where players roll to collect, equip, and interact with characters inspired by 50+ K-pop idols across 6 different K-pop groups. The game is designed for seamless play on **desktops, phones, and tablets**, ensuring a consistent experience across all devices.
 
 This game blends stylish UI, custom 3D models, and smart Lua scripting to deliver an immersive Roblox experience. All core systems — including the roll UI, roll animations, inventory, data storage, and character equipping — are fully scripted in Lua. Characters and environments are designed directly in Roblox Studio for seamless integration.
 
@@ -20,6 +20,16 @@ This game blends stylish UI, custom 3D models, and smart Lua scripting to delive
 - 🗺️ Explore a themed world tied to your character's origin
 - ⚡️ Discover K-pop-themed lightsticks hidden across the map
 - 🍀 Store and use lightsticks to boost your luck during rolls
+
+## 🔧 Technical Architecture
+Core Systems:
+- Client-Server Architecture: Distributed system using Roblox RemoteEvents/Functions for secure data synchronization
+- Real-time Multiplayer: Concurrent player state management with character equipping and visibility across sessions
+- Persistent Data Storage: Production DataStore implementation with error handling and data validation
+- Advanced Probability Engine: Weighted random selection with dynamic luck boost algorithms and statistical modeling
+- 3D Rendering Pipeline: Custom ViewportFrame integration for real-time 3D model previews and animations
+- Asynchronous State Management: Coroutine-based systems for non-blocking character movement and teleportation logic
+- Responsive UI Framework: Cross-platform interface supporting desktop, mobile, and tablet with shared state coordination
 
 ---
 
@@ -555,10 +565,57 @@ This system creates a seamless and reliable multiplayer experience, allowing pla
 
 
 ## 🌟 Inspirations
-### Game Design:
-- Inspired by games like *Genshin Impact*, *All Star Tower Defense*, and *Obby but Better*
-- Gacha system inspired by mobile games and random loot mechanics
+### Overview:
+- Kpop photocards and albums
+- Map theme based on iconic kpop concert hall
+- Standout character inspirations
 
-### Character & Map Design:
-- Character models influenced by [real groups/characters like LE SSERAFIM, TWICE]
-- Map themes based on [e.g., music stages, concert sets, cityscapes]
+In this final section, I want to highlight some of the real-life inspirations behind the game’s designs—aiming for both authenticity and a sense of community that resonates with fans, helping strengthen engagement and long-term player retention.
+
+### Real-life kpop photocards:
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/4df2692e-d916-4386-8dda-4dc61788bd05" height="350"/>
+</p>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/b03e1bd6-4452-4918-b165-13eaa6489547" height="350"/>
+  <img src="https://github.com/user-attachments/assets/3d85f473-5ee1-4a5f-9ab5-bc9b2d7fa157" height="350"/>
+</p>
+
+### Game map:
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/648b910c-364d-4b57-aa32-e9a283f1b6dc" height="200"/>
+  <img src="https://github.com/user-attachments/assets/ada39ad0-1a2d-4019-af6b-a736698b380c" height="200"/>
+</p>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/aa784c41-cfaa-48ab-836f-dbe3c552bafc" height="200"/>
+  <img src="https://github.com/user-attachments/assets/b8fbce95-1b3e-4188-a52b-1fdeceb82b45" height="200"/>
+</p>
+
+### Character Inspirations: 
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/960b74c2-07a2-42dd-9d47-25929f72d143" height="200"/>
+  <img src="https://github.com/user-attachments/assets/8bb35cf5-e372-4b0a-9254-b54216ea9042" height="200"/>
+</p>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/7cb89896-f608-4837-ad88-e8d1a87b11a4" height="200"/>
+  <img src="https://github.com/user-attachments/assets/d1bb7b82-5be8-4769-b46e-fcb0b9b8f8d9" height="200"/>
+</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
